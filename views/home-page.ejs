@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Parking Timer</title>
+    <% include css%>
+    <% include scripts%>
+</head>
+<body>
+<div class="alert alert-success alert-dismissible message">
+    <strong>Success!</strong> Your time is now set.
+    <i class="fa fa-times close" aria-hidden="true"></i>
+</div>
+<div class="container">
+    <div class="jumbotron">
+        <h1>Welcome To Timer-Pick Feature</h1>
+        <p>This is our new features to help you feel comfortable picking your car. This is still in experimental period</p>
+        <p>Please feel free to feedback if it's bug out there.</p>
+    </div>
+    <div class="timezone-wrapper">
+        <i class="fa fa-clock-o" aria-hidden="true"></i>
+        <span>Timezone: Vietnam GMT +07:00</span>
+    </div>
+    <div class="clock-wrapper">
+        <div id="main-clock"></div>
+    </div>
+    <div class="alarmGuide">
+        <i class="fa fa-hourglass-o" aria-hidden="true"></i>
+        <span>What time are you gonna pick your car ?</span>
+    </div>
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4 input-group clockpicker" data-align="left" data-autoclose="true">
+            <input type="text" class="form-control chooseTime">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+            </div>
+        </div>
+        <div class="col-4"></div>
+    </div>
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4" id="validateTime"></div>
+        <div class="col-4"></div>
+    </div>
+    <div class="row">
+        <div class="col-4"></div>
+        <button type="button" class="col-4 btn btn-primary" id="submitBtn" disabled>Submit</button>
+        <div class="col-4"></div>
+    </div>
+    <!--<div class="alarm-wrapper">-->
+        <!--<input type="number" class="chooseHour" min="0" max="23" step="1">-->
+        <!--<span class="seperateLine">:</span>-->
+        <!--<input type="number" class="chooseMinute" min="0" max="59" step="1">-->
+    <!--</div>-->
+</div>
+</body>
+</html>
