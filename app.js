@@ -9,6 +9,11 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
+var User = require('./models/user');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb+srv://Yafuo:phuanhdai@node-smart-parking-btryk.mongodb.net/test?retryWrites=true'
+    , {useNewUrlParser: true});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -25,8 +30,32 @@ console.log(__dirname);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.post('/userAlarm', (req, res) => {
-  console.log(`body: ${JSON.stringify(req.body)}`);
-  res.send(req.body);
+  // console.log(`body: ${JSON.stringify(req.body)}`);
+  const user = new User({
+    userSlot: parseInt(req.body.userSlot),
+    userAlarm: req.body.userAlarm
+  });
+  User.findOneAndUpdate({userSlot: user.userSlot}, {userAlarm: user.userAlarm}).then(updatedUser => {
+    if (!updatedUser) {
+      user.save().then(result => {
+        console.log('CREATED '+result);
+      }).catch(err => {
+        console.log(err);
+      });
+      res.status(201).send(user);
+    }
+    res.status(200).json({UPDATED: updatedUser});
+  }).catch(err => {
+    res.status(404);
+  });
+});
+
+app.get('/userAlarm/get-all-user', (req, res) => {
+  User.find().exec().then(result => {
+    res.status(200).json(result);
+  }).catch(err => {
+    res.status(500).json({error : err});
+  });
 });
 
 // catch 404 and forward to error handler

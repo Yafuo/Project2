@@ -39,14 +39,16 @@ $(document).ready(function () {
     $('#submitBtn').click((e) => {
         e.preventDefault();
         const userAlarm = $('.chooseTime').val();
+        const userSlot = $('.slot').val();
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:3000/userAlarm',
+            url: '/userAlarm',
             data: JSON.stringify({
-                'userAlarm': '16:50'
+                'userSlot': userSlot,
+                'userAlarm': userAlarm
             }),
             success: function(data) {
-                $('.container').css('display', 'none');
+                $('.container').css('filter', 'opacity(12%)');
                 $('.message').css('display', 'block');
             },
             dataType: 'json',
@@ -54,7 +56,7 @@ $(document).ready(function () {
         });
     });
     $('.close').click((e) => {
-        $('.container').css('display', 'block');
+        $('.container').css('filter', 'opacity(100%)');
         $('.message').css('display', 'none');
     });
     clock();
