@@ -7,7 +7,7 @@
     <% include css-homepage%>
     <% include home-script%>
     <script>
-        var parkingSlots = <%- JSON.stringify(parkingSlots)%>;
+        var parkingSlotsJS = <%- JSON.stringify(parkingSlots)%>;
     </script>
 </head>
 <body>
@@ -38,6 +38,11 @@
         <div class="col-0 col-lg-2"></div>
     </div>
 </div>
+<!--<iframe id="payment-page" -->
+<!--        src="https://test-payment.momo.vn/gw_payment/payment/qr?partnerCode=MOMO&accessKey=F8BBA842ECF85&requestId=MM1540456472575&amount=150000&orderId=MM1540456472571&signature=6721a7ab0c6bd73968e710e18065059d97e9a8fa0b6074fb41eae540687154de&requestType=captureMoMoWallet">-->
+<!--</iframe>-->
+<!--<iframe id="payment-page"></iframe>-->
+<img id="qr-code"/>
 <div class="container">
     <div class="row p-1">
         <div class="col-0 col-lg-4"></div>
@@ -54,7 +59,10 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <table class="table table-bordered table-hover">
+                        <tbody class="package">
+                        </tbody>
+                    </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
