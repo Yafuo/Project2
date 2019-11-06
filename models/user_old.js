@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema({
-    email: String,
-    password: String,
-    isLinkedToMomo: Boolean
+    userSlot: Number,
+    userAlarm: String
 });
 
 module.exports = mongoose.model('User', userSchema);
