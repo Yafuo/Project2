@@ -1,63 +1,65 @@
 $(document).ready(function () {
-    function format2Digits(intNum) {
-        return intNum < 10 ? '0' + intNum : intNum;
-    }
-    function clock() {
-        var time = new Date();
-        var hour = time.getHours();
-        var min = time.getMinutes();
-        var second = time.getSeconds();
-        hour = hour < 10 ? '0' + hour : hour;
-        min = min < 10 ? '0' + min : min;
-        second = second < 10 ? '0' + second : second;
-        var clk = `${hour}:${min}:${second}`;
-        $('#main-clock').text(clk);
-        setTimeout(clock, 1000);
-    }
-    $('.chooseTime').val(`${format2Digits(new Date().getHours())}:${format2Digits(new Date().getMinutes())}`);
-    $('.chooseHour').val(format2Digits(new Date().getHours()));
-    $('.chooseMinute').val(format2Digits(new Date().getMinutes()));
-    $('.clockpicker').clockpicker({
-        afterDone: function() {
-            var chosenTime = $('.chooseTime').val();
-            var chosenHour = parseInt(chosenTime.slice(0, chosenTime.indexOf(':')));
-            chosenHour = chosenHour === 0 ? 24 : chosenHour;
-            var chosenMinute = parseInt(chosenTime.slice(chosenTime.indexOf(':')+1));
-            if (chosenHour > new Date().getHours() || (chosenHour === new Date().getHours() && chosenMinute > new Date().getMinutes())) {
-                $('#validateTime').text('Ready to submit.');
-                $('#validateTime').removeClass().addClass('col-4 valid');
-                $('#submitBtn').attr('disabled', false);
-                $('#submitBtn').removeClass().addClass('col-4 btn btn-primary');
-            } else {
-                $('#validateTime').text('Invalid time. Please try again');
-                $('#validateTime').removeClass().addClass('col-4 invalid');
-                $('#submitBtn').attr('disabled', true);
-                $('#submitBtn').removeClass().addClass('col-4 btn btn-primary');
-            }
-        }
-    });
-    $('#submitBtn').click((e) => {
-        e.preventDefault();
-        const userAlarm = $('.chooseTime').val();
-        const userSlot = $('.slot').val();
+    $('#booking').click(e => {
         $.ajax({
             type: 'POST',
-            url: '/userAlarm',
-            data: JSON.stringify({
-                'userSlot': userSlot,
-                'userAlarm': userAlarm
-            }),
-            success: function(data) {
-                $('.container').css('filter', 'opacity(12%)');
-                $('.message').css('display', 'block');
-            },
-            dataType: 'json',
-            contentType: 'application/json'
+            url: '/booking',
+
         });
     });
-    $('.close').click((e) => {
-        $('.container').css('filter', 'opacity(100%)');
-        $('.message').css('display', 'none');
+    $('#paying').click(e => {
+        var date = Date.now().toString();
+        var data = `partnerCode=MOMO&accessKey=F8BBA842ECF85&requestId=UIT${date}&amount=5000&orderId=UIT${date}&orderInfo=UIT team.&returnUrl=https://momo.vn&notifyUrl=https://momo.vn&extraData=abc@gmail.com`;
+        var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
+        var signature = CryptoJS.HmacSHA256(data, secretKey);
+        console.log(signature.toString(CryptoJS.enc.Hex));
+        $.ajax({
+            type: 'POST',
+            url: 'https://test-payment.momo.vn/gw_payment/transactionProcessor',
+            data: JSON.stringify({
+                partnerCode: 'MOMO',
+                accessKey: 'F8BBA842ECF85',
+                requestId: 'UIT'+ date,
+                amount: '5000',
+                orderId: 'UIT'+ date,
+                orderInfo: 'UIT team.',
+                returnUrl: 'https://momo.vn',
+                notifyUrl: 'https://momo.vn',
+                requestType: 'captureMoMoWallet',
+                signature: signature.toString(CryptoJS.enc.Hex),
+                extraData: 'abc@gmail.com',
+            }),
+            crossDomain: true,
+            success: function (data) {
+                console.log(data);
+            },
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded'
+            },
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8'
+        });
+        // $.ajax({
+        //     type: 'POST',
+        //     url: 'https://test-payment.momo.vn/gw_payment/transactionProcessor',
+        //     headers: {
+        //         'content-type': "application/x-www-form-urlencoded"
+        //     },
+        //     data: '{\r\n  \"accessKey\": \"F8BBA842ECF85\",\r\n  \"partnerCode\": \"MOMO\",\r\n  \"requestType\": \"captureMoMoWallet\",\r\n  \"notifyUrl\": \"https://momo.vn\",\r\n  \"returnUrl\": \"https://momo.vn\",\r\n  \"orderId\": \"123213216\",\r\n  \"amount\": \"150000\",\r\n  \"orderInfo\": \"SDK team.\",\r\n  \"requestId\": \"123213216\",\r\n  \"extraData\": \"email=abc@gmail.com\",\r\n  \"signature\": \"a9749c5b911ca9506d2974873595b8cb1f33d7d46f8c132fb0eebeca9f0611ab\"\r\n}',
+        //     success: function (data, textStatus, jQxhr) {
+        //         var messsage = "HTTP Endpoint: " + 'https://test-payment.momo.vn/gw_payment/transactionProcessor' + "\nHTTP Status: " + jQxhr.status + "\nHTTP Payload: \n" + JSON.stringify(data, null, 1);
+        //         $("#response-body").text(messsage);
+        //         console.log(data);
+        //     },
+        //     error: function (jQxhr, textStatus, errorThrown) {
+        //         console.log("jQxhr", jQxhr, "textStatus", textStatus, "errorThrown", errorThrown)
+        //         var message = "HTTP Status: " + jQxhr.status + "\n" + "HTTP Body: " + JSON.stringify(errorThrown);
+        //         $("#response-body").text(message);
+        //         console.log(data);
+        //     },
+        //     complete: function (data) {
+        //         // setLoadingAnimation('#execute-request');
+        //         console.log(data);
+        //     }
+        // });
     });
-    clock();
 });
