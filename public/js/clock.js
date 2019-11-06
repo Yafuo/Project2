@@ -1,11 +1,20 @@
 $(document).ready(function () {
-    $('#booking').click(e => {
-        $.ajax({
-            type: 'POST',
-            url: '/booking',
-
-        });
+    var pack = ['Gói 1 tiếng', 'Gói 3 tiếng', 'Gói 1 ngày'];
+    pack.forEach( (p, i) => {
+        $('.package').append(`<tr id="pack${i}" data-ab="${i}"><td>${p}</td></tr>`);
     });
+    $('#booking').click( function (e)  {
+        console.log(parkingSlotsJS);
+        // $.ajax({
+        //     type: 'POST',
+        //     url: '/booking',
+        //
+        // });
+    });
+    $(".package").delegate('tr','click', null, function (e) {
+        var i = $(this).data()['ab'];
+        $(`#pack${i}`).addClass('bg-green');
+    })
     $('#paying').click(e => {
         var date = Date.now().toString();
         var data = `partnerCode=MOMO&accessKey=F8BBA842ECF85&requestId=UIT${date}&amount=5000&orderId=UIT${date}&orderInfo=UIT team.&returnUrl=https://momo.vn&notifyUrl=https://momo.vn&extraData=abc@gmail.com`;
@@ -30,7 +39,11 @@ $(document).ready(function () {
             }),
             crossDomain: true,
             success: function (data) {
+                var prefix = 'https://test-payment.momo.vn/gw_payment/qrcode/image/receipt?key=';
+                var qrUrl = prefix + data.qrCodeUrl.slice(42);
                 console.log(data);
+                console.log(qrUrl);
+                $('#qr-code').attr('src', qrUrl);
             },
             headers: {
                 'content-type': 'application/x-www-form-urlencoded'
@@ -38,28 +51,9 @@ $(document).ready(function () {
             dataType: 'json',
             contentType: 'application/json; charset=UTF-8'
         });
-        // $.ajax({
-        //     type: 'POST',
-        //     url: 'https://test-payment.momo.vn/gw_payment/transactionProcessor',
-        //     headers: {
-        //         'content-type': "application/x-www-form-urlencoded"
-        //     },
-        //     data: '{\r\n  \"accessKey\": \"F8BBA842ECF85\",\r\n  \"partnerCode\": \"MOMO\",\r\n  \"requestType\": \"captureMoMoWallet\",\r\n  \"notifyUrl\": \"https://momo.vn\",\r\n  \"returnUrl\": \"https://momo.vn\",\r\n  \"orderId\": \"123213216\",\r\n  \"amount\": \"150000\",\r\n  \"orderInfo\": \"SDK team.\",\r\n  \"requestId\": \"123213216\",\r\n  \"extraData\": \"email=abc@gmail.com\",\r\n  \"signature\": \"a9749c5b911ca9506d2974873595b8cb1f33d7d46f8c132fb0eebeca9f0611ab\"\r\n}',
-        //     success: function (data, textStatus, jQxhr) {
-        //         var messsage = "HTTP Endpoint: " + 'https://test-payment.momo.vn/gw_payment/transactionProcessor' + "\nHTTP Status: " + jQxhr.status + "\nHTTP Payload: \n" + JSON.stringify(data, null, 1);
-        //         $("#response-body").text(messsage);
-        //         console.log(data);
-        //     },
-        //     error: function (jQxhr, textStatus, errorThrown) {
-        //         console.log("jQxhr", jQxhr, "textStatus", textStatus, "errorThrown", errorThrown)
-        //         var message = "HTTP Status: " + jQxhr.status + "\n" + "HTTP Body: " + JSON.stringify(errorThrown);
-        //         $("#response-body").text(message);
-        //         console.log(data);
-        //     },
-        //     complete: function (data) {
-        //         // setLoadingAnimation('#execute-request');
-        //         console.log(data);
-        //     }
-        // });
     });
 });
+function selectedPack(i) {
+    console.log(pack[i]);
+    $(`#pack${i}`).addClass('bg-green');
+}
