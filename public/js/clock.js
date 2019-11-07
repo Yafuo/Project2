@@ -1,7 +1,8 @@
 $(document).ready(function () {
     var pack = ['Gói 1 tiếng', 'Gói 3 tiếng', 'Gói 1 ngày'];
+    $('#select-pack').addClass('disabled');
     pack.forEach( (p, i) => {
-        $('.package').append(`<tr id="pack${i}" data-ab="${i}"><td>${p}</td></tr>`);
+        $('.package').append(`<tr class="pack pack${i}" data-ab="${i}"><td>${p}</td></tr>`);
     });
     $('#booking').click( function (e)  {
         console.log(parkingSlotsJS);
@@ -12,8 +13,10 @@ $(document).ready(function () {
         // });
     });
     $(".package").delegate('tr','click', null, function (e) {
+        $('.pack').removeClass('bg-green');
         var i = $(this).data()['ab'];
-        $(`#pack${i}`).addClass('bg-green');
+        $(`.pack${i}`).addClass('bg-green');
+        $('#select-pack').removeClass('disabled');
     })
     $('#paying').click(e => {
         var date = Date.now().toString();
@@ -53,7 +56,3 @@ $(document).ready(function () {
         });
     });
 });
-function selectedPack(i) {
-    console.log(pack[i]);
-    $(`#pack${i}`).addClass('bg-green');
-}
