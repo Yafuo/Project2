@@ -5,15 +5,16 @@ var ParkingSlot = require('../models/parkingSlot');
 var {isLoggedIn} = require('../custom_lib/authenticate');
 var {hash, compare} = require('../custom_lib/bcrypt');
 var {verify, sign} = require('../custom_lib/jwt');
+var crypto = require('crypto-js');
 
 /* GET home page. */
 router.get('/home', isLoggedIn, function(req, res, next) {
   ParkingSlot.find({})
       .then(parkingSlots => {
         if (!parkingSlots) {
-          res.render('home-page', {parkingSlots: [], title: 'Home'});
+          res.render('home-page', {parkingSlots: [], title: 'Home Page'});
         } else {
-          res.render('home-page', {parkingSlots: parkingSlots, title: 'Home'});
+          res.render('home-page', {parkingSlots: parkingSlots, title: 'Home Page'});
         }
         })
       .catch(err => console.log(err));
@@ -50,7 +51,33 @@ router.post('/signup', function (req, res, next) {
   }).catch(err => {
     console.log(err);
   });
-})
+});
+router.get('/momo-return', (req, res) => {
+    console.log(req.body);
+    res.render('successful-payment', {title: 'Bill', data: req.body});
+});
+router.post('/receive-notify', (req, res, next) => {
+    console.log(req.body);
+    let d = {
+        partnerCode: req.body.partnerCode,
+        accessKey: req.body.accessKey,
+        requestId: req.body.requestId,
+        orderId: req.body.orderId,
+        errorCode: 0,
+        message: 'Giao dịch thành công nha MOMO',
+        responseTime: Date.now().toString(),
+        signature: '',
+        extraData: {}
+    };
+    let data = `partnerCode=${d.partnerCode}&accessKey=${d.accessKey}&requestId=${d.requestId}&orderId=${d.orderId}&errorCode=${d.errorCode}&message=${d.message}&responseTime=${d.responseTime}&extraData=${d.extraData}`;
+    let secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
+    let signature = crypto.HmacSHA256(data, secretKey);
+    console.log('DM Cot '+signature);
+    console.log(signature.toString(crypto.enc.Hex));
+    d.signature = signature;
+    res.json(d);
+    console.log(res);
+});
 router.get('/login', (req, res) => {
   // verify(req.cookies.token)
   //     .then(decoded => {
