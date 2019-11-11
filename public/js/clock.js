@@ -1,8 +1,11 @@
 $(document).ready(function () {
-    var pack = ['Gói 1 tiếng', 'Gói 3 tiếng', 'Gói 1 ngày'];
-    $('#select-pack').addClass('disabled');
+    var p = {name: '', cost: ''};
+    var pack = [{packCost: '50000', packName: '1 hour'}
+    , {packCost: '150000', packName: '3 hours'}
+    , {packCost: '1000000', packName: '1 day'}];
+    $('#booking').addClass('disabled');
     pack.forEach( (p, i) => {
-        $('.package').append(`<tr class="pack pack${i}" data-ab="${i}"><td>${p}</td></tr>`);
+        $('.package').append(`<tr class="pack pack${i}" data-ab="${i}"><td>${p.packName}</td></tr>`);
     });
     // $('#booking').click( function (e)  {
     //     console.log(parkingSlotsJS);
@@ -10,22 +13,24 @@ $(document).ready(function () {
     $(".package").delegate('tr','click', null, function (e) {
         $('.pack').removeClass('bg-green');
         var i = $(this).data()['ab'];
+        p.cost = pack[i].packCost;
+        p.name = pack[i].packName;
         $(`.pack${i}`).addClass('bg-green');
-        $('#select-pack').removeClass('disabled');
-    })
+        $('#booking').removeClass('disabled');
+    });
     $('#booking').click(e => {
         var date = Date.now().toString();
         var d = {
             partnerCode: 'MOMO',
-            accessKey: 'F8BBA842ECF85',
-            requestId: 'UIT'+ date,
-            amount: '5000',
-            orderId: 'UIT'+ date,
-            orderInfo: 'UIT team.',
-            returnUrl: 'https://141a182b.ngrok.io/',
-            notifyUrl: 'https://141a182b.ngrok.io/receive-notify',
-            requestType: 'captureMoMoWallet',
-            extraData: 'abc@gmail.com',
+                accessKey: 'F8BBA842ECF85',
+                requestId: 'UIT'+ date,
+                amount: p.cost,
+                orderId: 'UIT'+ date,
+                orderInfo: p.name,
+                returnUrl: 'https://351b61c8.ngrok.io',
+                notifyUrl: 'https://351b61c8.ngrok.io/receive-notify',
+                requestType: 'captureMoMoWallet',
+                extraData: 'abc@gmail.com',
         }
         var data = `partnerCode=${d.partnerCode}&accessKey=${d.accessKey}&requestId=${d.requestId}&amount=${d.amount}&orderId=${d.orderId}&orderInfo=${d.orderInfo}&returnUrl=${d.returnUrl}&notifyUrl=${d.notifyUrl}&extraData=${d.extraData}`;
         var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
