@@ -3,11 +3,22 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Smart Parking Timer</title>
+    <title><%= title%></title>
     <% include css-homepage%>
     <% include home-script%>
     <script>
         var parkingSlotsJS = <%- JSON.stringify(parkingSlots)%>;
+        // var socket = io('https://351b61c8.ngrok.io');
+        var socket = io('http://localhost:3000');
+        socket.on('news', function (data) {
+            console.log(data);
+            if (data.billCode === '0') {
+                $('#qr-code').attr('hidden', 'true');
+                $('#notifyModalCenter').modal('show');
+            } else if (data.billCode === '6') {
+                $('#notifyModalCenter').modal('show');
+            }
+        })
     </script>
 </head>
 <body>
@@ -46,7 +57,7 @@
 <div class="container">
     <div class="row p-1">
         <div class="col-0 col-lg-4"></div>
-        <button id="booking" class="col-12 col-lg-4 btn btn-primary"data-toggle="modal" data-target="#exampleModalCenter">Booking</button>
+        <button id="select-pack" class="col-12 col-lg-4 btn btn-primary"data-toggle="modal" data-target="#exampleModalCenter">Select Package</button>
         <div class="col-0 col-lg-4"></div>
     </div>
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -65,8 +76,26 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button id="select-pack" type="button" class="btn btn-primary">Save changes</button>
+                    <button id="booking" type="button" class="btn btn-primary" data-dismiss="modal">Booking</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="notifyModalCenter" tabindex="-1" role="dialog" aria-labelledby="notifyModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">GIAO DỊCH THÀNH CÔNG</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center">
+                        <img style="width: 300px; height: 300px" src="/public/images/congrats.png" />
+                    </div>
+                </div>
+                <div class="modal-footer">
                 </div>
             </div>
         </div>
