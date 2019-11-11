@@ -6,6 +6,8 @@ var {isLoggedIn} = require('../custom_lib/authenticate');
 var {hash, compare} = require('../custom_lib/bcrypt');
 var {verify, sign} = require('../custom_lib/jwt');
 var crypto = require('crypto-js');
+var encHex = require('crypto-js/enc-hex');
+var {io, app} = require('../app');
 
 /* GET home page. */
 router.get('/home', isLoggedIn, function(req, res, next) {
@@ -16,7 +18,7 @@ router.get('/home', isLoggedIn, function(req, res, next) {
         } else {
           res.render('home-page', {parkingSlots: parkingSlots, title: 'Home Page'});
         }
-        })
+      })
       .catch(err => console.log(err));
 });
 router.get('/', function(req, res, next) {
@@ -53,30 +55,30 @@ router.post('/signup', function (req, res, next) {
   });
 });
 router.get('/momo-return', (req, res) => {
-    console.log(req.body);
-    res.render('successful-payment', {title: 'Bill', data: req.body});
+  console.log(req.body);
+  res.render('successful-payment', {title: 'Bill', data: req.body});
 });
 router.post('/receive-notify', (req, res, next) => {
-    console.log(req.body);
-    let d = {
-        partnerCode: req.body.partnerCode,
-        accessKey: req.body.accessKey,
-        requestId: req.body.requestId,
-        orderId: req.body.orderId,
-        errorCode: 0,
-        message: 'Giao dịch thành công nha MOMO',
-        responseTime: Date.now().toString(),
-        signature: '',
-        extraData: {}
-    };
-    let data = `partnerCode=${d.partnerCode}&accessKey=${d.accessKey}&requestId=${d.requestId}&orderId=${d.orderId}&errorCode=${d.errorCode}&message=${d.message}&responseTime=${d.responseTime}&extraData=${d.extraData}`;
-    let secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
-    let signature = crypto.HmacSHA256(data, secretKey);
-    console.log('DM Cot '+signature);
-    console.log(signature.toString(crypto.enc.Hex));
-    d.signature = signature;
-    res.json(d);
-    console.log(res);
+  console.log(req.body);
+  let d = {
+    partnerCode: req.body.partnerCode,
+    accessKey: req.body.accessKey,
+    requestId: req.body.requestId,
+    orderId: req.body.orderId,
+    errorCode: req.body.errorCode,
+    message: req.body.message,
+    responseTime: Date.now().toString(),
+    signature: '',
+    extraData: {}
+  };
+  let data = `partnerCode=${d.partnerCode}&accessKey=${d.accessKey}&requestId=${d.requestId}&orderId=${d.orderId}&errorCode=${d.errorCode}&message=${d.message}&responseTime=${d.responseTime}&extraData=${d.extraData}`;
+  let secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
+  let signature = crypto.HmacSHA256(data, secretKey);
+  console.log(signature);
+  console.log(signature.toString(encHex));
+  d.signature = signature.toString(encHex);
+  req.app.io.emit('news', {billMsg: d.message, billCode: d.errorCode});
+  res.json(d);
 });
 router.get('/login', (req, res) => {
   // verify(req.cookies.token)
