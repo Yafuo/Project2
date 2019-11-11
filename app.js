@@ -11,6 +11,13 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+var http = require('http');
+var server = http.createServer(app);
+var io = require('socket.io')(server);
+
+app.io = io;
+
+server.listen(3000);
 
 var User = require('./models/user');
 var mongoose = require('mongoose');
@@ -35,6 +42,10 @@ console.log(__dirname);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+io.on('connection', function (socket) {
+  console.log('You are connected!');
+  // socket.emit('news', {test: 'yafuo'});
+});
 app.post('/userAlarm', (req, res) => {
   // console.log(`body: ${JSON.stringify(req.body)}`);
   const user = new User({
@@ -80,4 +91,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+module.exports = {app, io};
